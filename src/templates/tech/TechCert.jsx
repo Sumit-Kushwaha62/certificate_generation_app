@@ -33,73 +33,30 @@ const TechCert = ({ name = "Recipient Name", course = "Course Name", issuer = "O
       <circle cx="80" cy="40" r="3" fill="#00E5FF" opacity="0.5" />
       <circle cx="40" cy="100" r="3" fill="#00E5FF" opacity="0.5" />
 
-      {/* Top header block */}
+      {/* Top header block decorative rect */}
       <rect x="25" y="30" width="340" height="2" fill="#00E5FF" opacity="0.3" />
-      <text x="30" y="60" fill="#00E5FF" fontSize="10" fontFamily="monospace" letterSpacing="3" opacity="0.8">
-        // CERTIFICATE OF COMPLETION
-      </text>
-      <text x="30" y="78" fill="#00E5FF" fontSize="9" fontFamily="monospace" opacity="0.4" letterSpacing="1">
-        {'{ verified: true, blockchain: "0xA3F2..." }'}
-      </text>
 
-      {/* Main title */}
-      <text x="30" y="130" fill="#FFFFFF" fontSize="13" fontFamily="monospace" letterSpacing="4" fontWeight="bold">
-        TECH CERTIFICATE
-      </text>
+      {/* Main title underline */}
       <rect x="30" y="136" width="200" height="1.5" fill="#00E5FF" opacity="0.8" />
 
       {/* Cyan accent polygon / badge */}
       <polygon points="680,60 720,80 720,120 680,140 640,120 640,80" fill="none" stroke="#00E5FF" strokeWidth="1" opacity="0.6" />
       <polygon points="680,72 708,88 708,112 680,128 652,112 652,88" fill="#00E5FF" opacity="0.06" />
-      <text x="680" y="97" textAnchor="middle" fill="#00E5FF" fontSize="18" fontFamily="monospace">💻</text>
-      <text x="680" y="114" textAnchor="middle" fill="#00E5FF" fontSize="7" fontFamily="monospace" letterSpacing="1" opacity="0.7">VERIFIED</text>
-
-      {/* "Awarded to" label */}
-      <text x="30" y="190" fill="#00E5FF" fontSize="10" fontFamily="monospace" letterSpacing="2" opacity="0.7">
-        AWARDED_TO:
-      </text>
-
-      {/* Recipient name */}
-      <text x="28" y="248" fill="#FFFFFF" fontSize="42" fontFamily="'Segoe UI', Arial, sans-serif" fontWeight="700" letterSpacing="-1">
-        {name}
-      </text>
 
       {/* Glowing underline for name */}
       <line x1="28" y1="258" x2="580" y2="258" stroke="#00E5FF" strokeWidth="1" opacity="0.5" />
       <line x1="28" y1="260" x2="200" y2="260" stroke="#00E5FF" strokeWidth="2.5" opacity="0.3" />
 
-      {/* "for completing" */}
-      <text x="30" y="296" fill="#4A6080" fontSize="12" fontFamily="monospace" letterSpacing="2">
-        FOR_COMPLETING:
-      </text>
-
       {/* Course tag box */}
       <rect x="28" y="308" width="560" height="52" fill="#00E5FF" opacity="0.06" rx="3" />
       <rect x="28" y="308" width="3" height="52" fill="#00E5FF" opacity="0.8" />
-      <text x="48" y="341" fill="#00E5FF" fontSize="22" fontFamily="'Segoe UI', Arial, sans-serif" fontWeight="600" letterSpacing="0.5">
-        {course}
-      </text>
 
-      {/* Stats row */}
+      {/* Stats row boxes */}
       <rect x="28" y="390" width="160" height="50" fill="#0D1624" rx="4" />
       <rect x="28" y="390" width="160" height="1" fill="#00E5FF" opacity="0.4" />
-      <text x="108" y="412" textAnchor="middle" fill="#4A6080" fontSize="8" fontFamily="monospace" letterSpacing="2">ISSUED_BY</text>
-      <text x="108" y="430" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontFamily="monospace" fontWeight="bold">{issuer}</text>
 
       <rect x="208" y="390" width="160" height="50" fill="#0D1624" rx="4" />
       <rect x="208" y="390" width="160" height="1" fill="#00E5FF" opacity="0.4" />
-      <text x="288" y="412" textAnchor="middle" fill="#4A6080" fontSize="8" fontFamily="monospace" letterSpacing="2">DATE_ISSUED</text>
-      <text x="288" y="430" textAnchor="middle" fill="#FFFFFF" fontSize="12" fontFamily="monospace" fontWeight="bold">{date}</text>
-
-      {/* Bottom code comment */}
-      <text x="30" y="510" fill="#2A4060" fontSize="10" fontFamily="monospace">
-        {'/* This certifies the successful completion of all required modules and assessments */'}
-      </text>
-
-      {/* Bottom right watermark */}
-      <text x="770" y="545" textAnchor="end" fill="#1A2840" fontSize="9" fontFamily="monospace" letterSpacing="1">
-        ID: CERT-{'{'}date{'}'}-001
-      </text>
     </svg>
   );
 };
