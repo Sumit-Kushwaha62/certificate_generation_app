@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Stage, Layer, Image as KonvaImage, Text, Transformer } from 'react-konva';
-import { svgToDataURL } from '../utils/svgToDataURL';
-import ReactDOMServer from 'react-dom/server';
 
 const CANVAS_W = 800;
 const CANVAS_H = 560;
@@ -9,71 +7,45 @@ const CANVAS_H = 560;
 const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSelectedId }) => {
   const [bgImage, setBgImage] = useState(null);
   const [editingId, setEditingId] = useState(null);
-  const [editPos, setEditPos] = useState({ x: 0, y: 0, width: 0 });
+  const [editPos, setEditPos] = useState({ x: 0, y: 0, width: 0, fontSize: 16 });
   const [editValue, setEditValue] = useState('');
   const stageRef = useRef(null);
   const trRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Load background SVG as image whenever template changes
+  // Load PNG background
   useEffect(() => {
-    if (!activeTemplate) return;
-    const Component = activeTemplate.component;
-    const svgString = ReactDOMServer.renderToString(<Component />);
-    // Wrap in proper SVG if not already
-    const fullSvg = svgString.startsWith('<svg') ? svgString :
-      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="800" height="560">${svgString}</svg>`;
-
-    svgToDataURL(fullSvg, CANVAS_W, CANVAS_H).then((dataURL) => {
-      const img = new window.Image();
-      img.src = dataURL;
-      img.onload = () => setBgImage(img);
-    }).catch(() => {
-      // fallback — blank bg
-      setBgImage(null);
-    });
+    if (!activeTemplate?.background) return;
+    const img = new window.Image();
+    img.src = activeTemplate.background;
+    img.onload = () => setBgImage(img);
+    img.onerror = () => setBgImage(null);
   }, [activeTemplate]);
 
-  // Attach transformer to selected node
+  // Transformer attach
   useEffect(() => {
     if (!trRef.current || !stageRef.current) return;
     if (selectedId) {
       const node = stageRef.current.findOne(`#${selectedId}`);
-      if (node) {
-        trRef.current.nodes([node]);
-        trRef.current.getLayer()?.batchDraw();
-      }
+      if (node) { trRef.current.nodes([node]); trRef.current.getLayer()?.batchDraw(); }
     } else {
       trRef.current.nodes([]);
       trRef.current.getLayer()?.batchDraw();
     }
   }, [selectedId, elements]);
 
-  // Focus input when editing starts
   useEffect(() => {
-    if (editingId && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
+    if (editingId && inputRef.current) { inputRef.current.focus(); inputRef.current.select(); }
   }, [editingId]);
 
   const handleStageClick = (e) => {
-    if (e.target === e.target.getStage()) {
-      setSelectedId(null);
-    }
-  };
-
-  const handleElementClick = (id) => {
-    setSelectedId(id);
+    if (e.target === e.target.getStage()) setSelectedId(null);
   };
 
   const handleDblClick = (el) => {
-    const node = stageRef.current?.findOne(`#${el.id}`);
-    if (!node) return;
-
-    const stageBox = stageRef.current.container().getBoundingClientRect();
+    const stageBox = stageRef.current?.container().getBoundingClientRect();
+    if (!stageBox) return;
     const scale = stageBox.width / CANVAS_W;
-
     setEditPos({
       x: stageBox.left + el.x * scale,
       y: stageBox.top + el.y * scale,
@@ -87,75 +59,85 @@ const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSe
 
   const commitEdit = () => {
     if (!editingId) return;
-    setElements((prev) =>
-      prev.map((el) => el.id === editingId ? { ...el, content: editValue } : el)
-    );
+    setElements(prev => prev.map(el => el.id === editingId ? { ...el, content: editValue } : el));
     setEditingId(null);
     setSelectedId(editingId);
   };
 
   const handleDragEnd = (id, e) => {
-    setElements((prev) =>
-      prev.map((el) => el.id === id ? { ...el, x: e.target.x(), y: e.target.y() } : el)
-    );
+    setElements(prev => prev.map(el => el.id === id ? { ...el, x: e.target.x(), y: e.target.y() } : el));
+  };
+
+  const handleImageDragEnd = (id, e) => {
+    setElements(prev => prev.map(el => el.id === id ? { ...el, x: e.target.x(), y: e.target.y() } : el));
   };
 
   return (
     <div className="relative" style={{ width: CANVAS_W, height: CANVAS_H }}>
-      <Stage
-        ref={stageRef}
-        width={CANVAS_W}
-        height={CANVAS_H}
-        onClick={handleStageClick}
-      >
+      <Stage ref={stageRef} width={CANVAS_W} height={CANVAS_H} onClick={handleStageClick}>
         <Layer>
-          {/* Background template image */}
+          {/* PNG Background */}
           {bgImage && (
-            <KonvaImage
-              image={bgImage}
-              x={0} y={0}
-              width={CANVAS_W}
-              height={CANVAS_H}
-              listening={false}
-            />
+            <KonvaImage image={bgImage} x={0} y={0} width={CANVAS_W} height={CANVAS_H} listening={false} />
           )}
 
-          {/* Editable elements */}
+          {/* Elements — text + images */}
           {elements.map((el) => {
             if (el.type === 'text') {
               return (
                 <Text
-                  key={el.id}
-                  id={el.id}
-                  x={el.x}
-                  y={el.y}
+                  key={el.id} id={el.id}
+                  x={el.x} y={el.y}
                   text={editingId === el.id ? '' : el.content}
                   fontSize={el.fontSize || 24}
                   fontFamily={el.fontFamily || 'DM Sans'}
                   fill={el.color || '#1A1A2E'}
-                  fontStyle={`${el.bold ? 'bold' : 'normal'} ${el.italic ? 'italic' : ''}`}
+                  fontStyle={[el.bold ? 'bold' : '', el.italic ? 'italic' : ''].filter(Boolean).join(' ') || 'normal'}
                   align={el.align || 'center'}
                   width={el.width || 400}
                   draggable
-                  onClick={() => handleElementClick(el.id)}
+                  opacity={editingId === el.id ? 0 : 1}
+                  onClick={() => setSelectedId(el.id)}
                   onDblClick={() => handleDblClick(el)}
                   onDragEnd={(e) => handleDragEnd(el.id, e)}
-                  opacity={editingId === el.id ? 0 : 1}
+                />
+              );
+            }
+            if (el.type === 'image' && el.imageObj) {
+              return (
+                <KonvaImage
+                  key={el.id} id={el.id}
+                  image={el.imageObj}
+                  x={el.x} y={el.y}
+                  width={el.width || 100}
+                  height={el.height || 100}
+                  draggable
+                  onClick={() => setSelectedId(el.id)}
+                  onDragEnd={(e) => handleImageDragEnd(el.id, e)}
                 />
               );
             }
             return null;
           })}
 
-          <Transformer
-            ref={trRef}
-            rotateEnabled={false}
-            boundBoxFunc={(oldBox, newBox) => newBox}
+          <Transformer ref={trRef} rotateEnabled={false}
+            boundBoxFunc={(_, newBox) => newBox}
+            onTransformEnd={(e) => {
+              const node = e.target;
+              const id = node.id();
+              setElements(prev => prev.map(el => el.id === id ? {
+                ...el,
+                x: node.x(), y: node.y(),
+                width: Math.max(50, node.width() * node.scaleX()),
+                height: el.type === 'image' ? Math.max(20, node.height() * node.scaleY()) : el.height,
+              } : el));
+              node.scaleX(1); node.scaleY(1);
+            }}
           />
         </Layer>
       </Stage>
 
-      {/* Floating inline text editor */}
+      {/* Inline text editor */}
       {editingId && (
         <textarea
           ref={inputRef}
@@ -164,26 +146,18 @@ const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSe
           onBlur={commitEdit}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commitEdit(); }
-            if (e.key === 'Escape') { setEditingId(null); }
+            if (e.key === 'Escape') setEditingId(null);
           }}
           style={{
-            position: 'fixed',
-            left: editPos.x,
-            top: editPos.y,
-            width: editPos.width,
-            fontSize: editPos.fontSize,
+            position: 'fixed', left: editPos.x, top: editPos.y,
+            width: editPos.width, fontSize: editPos.fontSize,
             fontFamily: 'DM Sans, sans-serif',
-            border: '2px solid #7C5CBF',
-            borderRadius: '6px',
-            padding: '4px 8px',
-            background: 'rgba(255,255,255,0.95)',
-            color: '#1A1A2E',
-            outline: 'none',
-            resize: 'none',
-            zIndex: 9999,
-            lineHeight: 1.3,
-            boxShadow: '0 4px 20px rgba(124,92,191,0.3)',
-            minHeight: editPos.fontSize * 1.6,
+            border: '2px solid #7C5CBF', borderRadius: '6px',
+            padding: '4px 8px', background: 'rgba(255,255,255,0.97)',
+            color: '#1A1A2E', outline: 'none', resize: 'none',
+            zIndex: 9999, lineHeight: 1.3,
+            boxShadow: '0 4px 20px rgba(124,92,191,0.25)',
+            minHeight: editPos.fontSize * 1.8,
           }}
           rows={1}
         />
