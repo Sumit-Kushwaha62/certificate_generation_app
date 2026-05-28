@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Stage, Layer, Image as KonvaImage, Text, Transformer } from 'react-konva';
 
 const CANVAS_W = 800;
-const CANVAS_H = 560;
+const CANVAS_H = 566;
 
 const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSelectedId }) => {
   const [bgImage, setBgImage] = useState(null);
