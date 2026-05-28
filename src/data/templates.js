@@ -12,7 +12,7 @@ export const templates = [
     id: 'bg1',
     name: 'Black Gold Geometric',
     category: 'corporate',
-    background: '/src/assets/templates/bg1.png',
+    background: '/templates/bg1.png',
     textColor: DARK,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'INTERNATIONAL CONFERENCE', x: 80, y: 58, fontSize: 36, fontFamily: 'Playfair Display', color: DARK_BLUE, bold: true, italic: false, align: 'center', width: 640 },
@@ -33,7 +33,7 @@ export const templates = [
     id: 'bg2',
     name: 'Black Gold Curves',
     category: 'corporate',
-    background: '/src/assets/templates/bg2.png',
+    background: '/templates/bg2.png',
     textColor: WHITE,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'INTERNATIONAL CONFERENCE', x: 90, y: 70, fontSize: 34, fontFamily: 'Playfair Display', color: GOLD, bold: true, italic: false, align: 'center', width: 620 },
@@ -53,7 +53,7 @@ export const templates = [
     id: 'bg3',
     name: 'Black Gold Floral',
     category: 'education',
-    background: '/src/assets/templates/bg3.png',
+    background: '/templates/bg3.png',
     textColor: WHITE,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'CERTIFICATE OF ACHIEVEMENT', x: 90, y: 75, fontSize: 32, fontFamily: 'Playfair Display', color: GOLD, bold: true, italic: false, align: 'center', width: 620 },
@@ -72,7 +72,7 @@ export const templates = [
     id: 'bg4',
     name: 'Green Gold Laurel',
     category: 'education',
-    background: '/src/assets/templates/bg4.png',
+    background: '/templates/bg4.png',
     textColor: WHITE,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'CERTIFICATE OF ACHIEVEMENT', x: 90, y: 72, fontSize: 32, fontFamily: 'Playfair Display', color: GREEN, bold: true, italic: false, align: 'center', width: 620 },
@@ -92,7 +92,7 @@ export const templates = [
     id: 'bg5',
     name: 'Green Lotus',
     category: 'education',
-    background: '/src/assets/templates/bg5.png',
+    background: '/templates/bg5.png',
     textColor: GREEN,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'CERTIFICATE OF PARTICIPATION', x: 90, y: 78, fontSize: 31, fontFamily: 'Playfair Display', color: GREEN, bold: true, italic: false, align: 'center', width: 620 },
@@ -112,7 +112,7 @@ export const templates = [
     id: 'bg6',
     name: 'White Gold Lace',
     category: 'corporate',
-    background: '/src/assets/templates/bg6.png',
+    background: '/templates/bg6.png',
     textColor: DARK,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'CERTIFICATE OF APPRECIATION', x: 90, y: 80, fontSize: 32, fontFamily: 'Playfair Display', color: DARK_BLUE, bold: true, italic: false, align: 'center', width: 620 },
@@ -131,7 +131,7 @@ export const templates = [
     id: 'bg7',
     name: 'Classic Cream',
     category: 'education',
-    background: '/src/assets/templates/bg7.png',
+    background: '/templates/bg7.png',
     textColor: DARK,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'CERTIFICATE OF ACHIEVEMENT', x: 90, y: 75, fontSize: 32, fontFamily: 'Playfair Display', color: DARK, bold: true, italic: false, align: 'center', width: 620 },
@@ -151,7 +151,7 @@ export const templates = [
     id: 'bg8',
     name: 'Red Gold Wave',
     category: 'corporate',
-    background: '/src/assets/templates/bg8.png',
+    background: '/templates/bg8.png',
     textColor: DARK,
     fields: [
       { id: 'title', label: 'Main Title', defaultValue: 'CERTIFICATE OF EXCELLENCE', x: 90, y: 72, fontSize: 32, fontFamily: 'Playfair Display', color: MAROON, bold: true, italic: false, align: 'center', width: 620 },
