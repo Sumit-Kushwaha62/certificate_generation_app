@@ -1,4 +1,4 @@
-const AcademicCert = ({ name = "Recipient Name", course = "Course Name", issuer = "Institution Name", date = "January 1, 2025" }) => {
+const AcademicCert = () => {
   return (
     <svg viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
       <defs>

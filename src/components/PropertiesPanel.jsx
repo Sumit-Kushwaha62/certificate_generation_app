@@ -7,8 +7,6 @@ const FONTS = [
   'Courier New',
 ];
 
-const FONT_SIZES = [10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 42, 48, 56, 64, 72];
-
 const PRESET_COLORS = [
   '#1A1A2E', '#FFFFFF', '#7C5CBF', '#C9A84C',
   '#E53E3E', '#2B6CB0', '#276749', '#744210',

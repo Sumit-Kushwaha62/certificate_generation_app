@@ -9,6 +9,22 @@ const GREEN = '#1B4332';
 
 export const templates = [
   {
+    id: 'blank',
+    name: 'Blank Page',
+    category: 'corporate',
+    background: null,
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    fields: [
+      { id: 'title', label: 'Title', defaultValue: 'Certificate of Achievement', x: 90, y: 80, fontSize: 36, fontFamily: 'Playfair Display', color: '#1A1A1A', bold: true, italic: false, align: 'center', width: 620 },
+      { id: 'certify', label: 'Certify Line', defaultValue: 'This is to certify that', x: 110, y: 200, fontSize: 14, fontFamily: 'DM Sans', color: '#333333', bold: false, italic: false, align: 'center', width: 580 },
+      { id: 'name', label: 'Recipient Name', defaultValue: 'Recipient Name', x: 150, y: 250, fontSize: 32, fontFamily: 'Playfair Display', color: '#1A1A1A', bold: true, italic: false, align: 'center', width: 500 },
+      { id: 'body', label: 'Body Text', defaultValue: 'has successfully completed the program with distinction.', x: 110, y: 320, fontSize: 13, fontFamily: 'DM Sans', color: '#333333', bold: false, italic: false, align: 'center', width: 580 },
+      { id: 'date', label: 'Date', defaultValue: 'Date: ___________', x: 110, y: 430, fontSize: 12, fontFamily: 'DM Sans', color: '#333333', bold: false, italic: false, align: 'left', width: 200 },
+      { id: 'signature1', label: 'Signature', defaultValue: 'Authorized Signatory', x: 450, y: 430, fontSize: 12, fontFamily: 'DM Sans', color: '#333333', bold: true, italic: false, align: 'center', width: 200 },
+    ],
+  },
+  {
     id: 'bg1',
     name: 'Black Gold Geometric',
     category: 'corporate',
@@ -167,14 +183,3 @@ export const templates = [
     ],
   },
 ];
-
-
-
-
-
-
-
-
-
-
-

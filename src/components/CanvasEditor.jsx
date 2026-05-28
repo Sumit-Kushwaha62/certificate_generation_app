@@ -74,7 +74,8 @@ const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSe
 
   return (
     <div className="relative" style={{ width: CANVAS_W, height: CANVAS_H }}>
-      <Stage ref={stageRef} width={CANVAS_W} height={CANVAS_H} onClick={handleStageClick}>
+      <Stage ref={stageRef} width={CANVAS_W} height={CANVAS_H} onClick={handleStageClick}
+        style={{ background: activeTemplate?.backgroundColor || '#ffffff' }}>
         <Layer>
           {/* PNG Background */}
           {bgImage && (

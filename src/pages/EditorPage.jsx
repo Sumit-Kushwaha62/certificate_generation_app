@@ -106,6 +106,18 @@ function EditorPage() {
     e.target.value = '';
   };
 
+  // Set background image on canvas
+  const handleBgUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setActiveTemplate(prev => ({ ...prev, background: ev.target.result }));
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
   const [shareOpen, setShareOpen] = useState(false);
 
   const captureCanvas = async () => {
@@ -481,6 +493,26 @@ function EditorPage() {
             {activePanel === 'insert' && (
               <div className="p-4 flex flex-col gap-3">
                 <p className="text-[10px] text-[#AAA] font-semibold uppercase tracking-wide">Add to certificate</p>
+
+                {/* Upload background */}
+                <label className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-[#E8E8E8] bg-white hover:border-[#C4B0E8] hover:bg-[#F9F6FF] transition cursor-pointer">
+                  <div className="w-9 h-9 bg-[#F3EFF9] rounded-lg flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" strokeWidth="2" className="w-4 h-4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                  </div>
+                  <div>
+                    <p className="text-[12px] font-semibold text-[#333]">Background Image</p>
+                    <p className="text-[10px] text-[#AAA]">Set full canvas background</p>
+                  </div>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleBgUpload} />
+                </label>
+
+                {activeTemplate?.background && (
+                  <button
+                    onClick={() => setActiveTemplate(prev => ({ ...prev, background: null }))}
+                    className="w-full py-2 rounded-xl text-[11px] font-semibold text-red-400 border border-red-200 hover:bg-red-50 transition">
+                    ✕ Remove Background
+                  </button>
+                )}
 
                 {/* Add text */}
                 <button onClick={() => { addTextElement(); }}

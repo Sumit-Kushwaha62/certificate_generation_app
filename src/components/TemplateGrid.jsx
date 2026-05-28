@@ -88,11 +88,18 @@ const TemplateGrid = ({ query, activeTemplate, setActiveTemplate }) => {
                 >
                   {/* Image Preview */}
                   <div className="relative aspect-[4/3] bg-[#F8F8F8] overflow-hidden">
-                    <img
-                      src={template.background}
-                      alt={template.name}
-                      className="w-full h-full object-cover"
-                    />
+                    {template.background ? (
+                      <img
+                        src={template.background}
+                        alt={template.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-white border-2 border-dashed border-[#DDD]">
+                        <span className="text-3xl mb-1">📄</span>
+                        <span className="text-[11px] text-[#AAA] font-medium">Blank Canvas</span>
+                      </div>
+                    )}
 
                     {/* Hover Overlay */}
                     {isHovered && !isActive && (

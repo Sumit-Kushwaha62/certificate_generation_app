@@ -1,4 +1,4 @@
-const CorporateCert = ({ name = "Recipient Name", course = "Training Program", issuer = "Organization", date = "January 1, 2025" }) => {
+const CorporateCert = () => {
   return (
     <svg viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
       {/* Background */}
