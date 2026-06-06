@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import TemplateGrid from '../components/TemplateGrid';
 import CanvasEditor from '../components/CanvasEditor';
 import PropertiesPanel from '../components/PropertiesPanel';
@@ -6,6 +7,8 @@ import { templates } from '../data/templates';
 import useExport from '../hooks/useExport';
 import JSZip from 'jszip';
 import QRCode from 'qrcode';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 let elCounter = 100;
 const newId = () => `el_${++elCounter}`;
@@ -114,6 +117,10 @@ const createQRImage = async (value) => {
 };
 
 function EditorPage() {
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const [activeTemplate, setActiveTemplate] = useState(templates[0]);
   const [elements, setElements] = useState(() => buildElements(templates[0]));
   const [historyStack, setHistoryStack] = useState(() => [
@@ -129,6 +136,12 @@ function EditorPage() {
   const [bulkFileName, setBulkFileName] = useState('');
   const [bulkProgress, setBulkProgress] = useState('');
   const [bulkGenerating, setBulkGenerating] = useState(false);
+
+  // Save state
+  const [designId, setDesignId] = useState(null);
+  const [designName, setDesignName] = useState('Untitled Certificate');
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
 
   // Form state — dynamic, keyed by field id
   const [formData, setFormData] = useState({});
@@ -151,6 +164,18 @@ function EditorPage() {
   const hasQRCode = elements.some((el) => el.qrCode);
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < historyStack.length - 1;
+
+  // Load existing design if ?id= present
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (!id) return;
+    supabase.from('designs').select('*').eq('id', id).single().then(({ data }) => {
+      if (!data) return;
+      setDesignId(data.id);
+      setDesignName(data.name);
+      if (data.elements) setElements(data.elements);
+    });
+  }, []);
 
   useEffect(() => {
     if (isRestoringHistoryRef.current) {
@@ -219,7 +244,7 @@ function EditorPage() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [handleUndo, handleRedo]);
-  // Delete selected element with Delete/Backspace key (when not typing in an input)
+
   useEffect(() => {
     const handler = (e) => {
       if (!selectedId) return;
@@ -268,6 +293,35 @@ function EditorPage() {
       cancelled = true;
     };
   }, [hasQRCode, regNumberValue]);
+
+  // Save to Supabase
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    setSaveMsg('');
+
+    // Strip imageObj (non-serializable) before saving
+    const serializableElements = elements.map(({ imageObj, ...rest }) => rest);
+
+    const payload = {
+      user_id: user.id,
+      name: designName,
+      type: 'certificate',
+      elements: serializableElements,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (designId) {
+      await supabase.from('designs').update(payload).eq('id', designId);
+    } else {
+      const { data } = await supabase.from('designs').insert(payload).select().single();
+      if (data) setDesignId(data.id);
+    }
+
+    setSaving(false);
+    setSaveMsg('Saved!');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
 
   // Switch template → rebuild elements
   const handleTemplateSelect = (template) => {
@@ -329,7 +383,6 @@ function EditorPage() {
     }
   };
 
-  // Add image element from file upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -355,7 +408,6 @@ function EditorPage() {
     e.target.value = '';
   };
 
-  // Set background image on canvas
   const handleBgUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -472,14 +524,19 @@ function EditorPage() {
       {/* NAVBAR */}
       <header className="h-16 bg-white border-b border-[#E8E0F5] flex items-center justify-between px-5 shrink-0 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-[#7C5CBF] rounded-lg flex items-center justify-center shadow-md">
+          <button onClick={() => navigate('/dashboard')} className="w-8 h-8 bg-[#7C5CBF] rounded-lg flex items-center justify-center shadow-md hover:bg-[#6A4DAD] transition">
             <svg viewBox="0 0 24 24" fill="white" className="w-[18px] h-[18px]"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          </div>
+          </button>
           <span className="text-[15px] font-bold text-[#1A1A2E]">CertGen</span>
           <span className="text-[10px] bg-[#EDE7F6] text-[#7C5CBF] px-2 py-0.5 rounded-full font-semibold">PRO</span>
         </div>
 
-        <span className="text-[12px] font-bold text-[#7C5CBF] bg-[#FAF8FE] border border-[#E8E0F5] px-3 py-1.5 rounded-full">{activeTemplate?.name}</span>
+        {/* Design name editable */}
+        <input
+          value={designName}
+          onChange={e => setDesignName(e.target.value)}
+          className="text-[12px] font-bold text-[#7C5CBF] bg-[#FAF8FE] border border-[#E8E0F5] px-3 py-1.5 rounded-full text-center focus:outline-none focus:border-[#7C5CBF] w-48"
+        />
 
         <div className="flex items-center gap-2.5 relative">
 
@@ -498,7 +555,6 @@ function EditorPage() {
               Share
             </button>
 
-            {/* Dropdown */}
             {shareOpen && (
               <div className="absolute right-0 top-10 w-52 bg-white rounded-2xl shadow-xl border border-[#E8E8E8] z-50 overflow-hidden">
                 <div className="px-4 py-3 border-b border-[#F0F0F0]">
@@ -506,7 +562,6 @@ function EditorPage() {
                   <p className="text-[10px] text-[#AAA]">Download PNG, copy, or share</p>
                 </div>
 
-                {/* WhatsApp */}
                 <button onClick={shareWhatsApp}
                   className="flex items-center gap-3 w-full px-4 py-3 hover:bg-[#F5F5F5] transition text-left">
                   <div className="w-8 h-8 rounded-lg bg-[#E8F5E9] flex items-center justify-center shrink-0">
@@ -520,7 +575,6 @@ function EditorPage() {
                   </div>
                 </button>
 
-                {/* Email */}
                 <button onClick={shareEmail}
                   className="flex items-center gap-3 w-full px-4 py-3 hover:bg-[#F5F5F5] transition text-left">
                   <div className="w-8 h-8 rounded-lg bg-[#E3F2FD] flex items-center justify-center shrink-0">
@@ -534,7 +588,6 @@ function EditorPage() {
                   </div>
                 </button>
 
-                {/* Download PNG */}
                 <button onClick={downloadPNG}
                   className="flex items-center gap-3 w-full px-4 py-3 hover:bg-[#F5F5F5] transition text-left">
                   <div className="w-8 h-8 rounded-lg bg-[#F3E5F5] flex items-center justify-center shrink-0">
@@ -548,7 +601,6 @@ function EditorPage() {
                   </div>
                 </button>
 
-                {/* Copy to Clipboard */}
                 <button onClick={copyToClipboard}
                   className="flex items-center gap-3 w-full px-4 py-3 hover:bg-[#F5F5F5] transition text-left">
                   <div className="w-8 h-8 rounded-lg bg-[#E8F0FE] flex items-center justify-center shrink-0">
@@ -563,7 +615,6 @@ function EditorPage() {
                   </div>
                 </button>
 
-                {/* Native Share */}
                 <button onClick={shareNative}
                   className="flex items-center gap-3 w-full px-4 py-3 hover:bg-[#F5F5F5] transition text-left border-t border-[#F0F0F0]">
                   <div className="w-8 h-8 rounded-lg bg-[#FFF8E1] flex items-center justify-center shrink-0">
@@ -630,7 +681,7 @@ function EditorPage() {
           </button>
           </div>
 
-          {/* BULK GENERATE */}
+          {/* BULK + PDF + SAVE */}
           <div className="flex items-center gap-1 rounded-2xl border border-[#E8E0F5] bg-[#FAF8FE] p-1 shadow-sm">
           <button
             onClick={() => setBulkOpen(true)}
@@ -643,13 +694,25 @@ function EditorPage() {
             Bulk Generate
           </button>
 
-          {/* DOWNLOAD PDF */}
           <button onClick={exportPDF} disabled={exporting}
             title="Download PDF"
             className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-bold transition-all ${exporting ? 'bg-[#C4B0E8] cursor-not-allowed text-white' : 'bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white shadow-md shadow-[#7C5CBF]/20'}`}>
             {exporting ? 'Generating...' : <>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download PDF
+            </>}
+          </button>
+
+          {/* SAVE BUTTON */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            title="Save design"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-bold transition-all bg-green-500 hover:bg-green-600 active:scale-[0.98] text-white shadow-md disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : saveMsg ? '✓ Saved!' : <>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save
             </>}
           </button>
           </div>
@@ -686,12 +749,10 @@ function EditorPage() {
 
           <div className="flex-1 overflow-y-auto">
 
-            {/* TEMPLATES */}
             {activePanel === 'templates' && (
               <TemplateGrid query={query} activeTemplate={activeTemplate} setActiveTemplate={handleTemplateSelect} />
             )}
 
-            {/* FORM FILL — dynamic, auto-detects fields from active template */}
             {activePanel === 'form' && (() => {
               const templateFields = activeTemplate?.fields || [];
               return (
@@ -731,7 +792,7 @@ function EditorPage() {
                 </div>
               );
             })()}
-            {/* LAYERS */}
+
             {activePanel === 'layers' && (
               <div className="p-4 flex flex-col gap-3">
                 <button onClick={addTextElement}
@@ -751,12 +812,10 @@ function EditorPage() {
               </div>
             )}
 
-            {/* INSERT */}
             {activePanel === 'insert' && (
               <div className="p-4 flex flex-col gap-3">
                 <p className="text-[10px] text-[#AAA] font-semibold uppercase tracking-wide">Add to certificate</p>
 
-                {/* Upload background */}
                 <label className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-[#E8E8E8] bg-white hover:border-[#C4B0E8] hover:bg-[#F9F6FF] transition cursor-pointer">
                   <div className="w-9 h-9 bg-[#F3EFF9] rounded-lg flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" strokeWidth="2" className="w-4 h-4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
@@ -776,7 +835,6 @@ function EditorPage() {
                   </button>
                 )}
 
-                {/* Add text */}
                 <button onClick={() => { addTextElement(); }}
                   className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-[#E8E8E8] bg-white hover:border-[#C4B0E8] hover:bg-[#F9F6FF] transition text-left">
                   <div className="w-9 h-9 bg-[#EDE7F6] rounded-lg flex items-center justify-center shrink-0">
@@ -785,7 +843,6 @@ function EditorPage() {
                   <div><p className="text-[12px] font-semibold text-[#333]">Text Box</p><p className="text-[10px] text-[#AAA]">Add editable text</p></div>
                 </button>
 
-                {/* Upload image/logo */}
                 <label className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-[#E8E8E8] bg-white hover:border-[#C4B0E8] hover:bg-[#F9F6FF] transition cursor-pointer">
                   <div className="w-9 h-9 bg-[#E8F5E9] rounded-lg flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#2E7D32" strokeWidth="2" className="w-4 h-4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -794,7 +851,6 @@ function EditorPage() {
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                 </label>
 
-                {/* Upload QR */}
                 <label className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-[#E8E8E8] bg-white hover:border-[#C4B0E8] hover:bg-[#F9F6FF] transition cursor-pointer">
                   <div className="w-9 h-9 bg-[#FFF3E0] rounded-lg flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#E65100" strokeWidth="2" className="w-4 h-4"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="14" width="3" height="3"/><rect x="14" y="18" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
@@ -803,7 +859,6 @@ function EditorPage() {
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                 </label>
 
-                {/* Upload signature */}
                 <label className="flex items-center gap-3 w-full px-4 py-3 rounded-xl border border-[#E8E8E8] bg-white hover:border-[#C4B0E8] hover:bg-[#F9F6FF] transition cursor-pointer">
                   <div className="w-9 h-9 bg-[#E3F2FD] rounded-lg flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#1565C0" strokeWidth="2" className="w-4 h-4"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
@@ -847,7 +902,6 @@ function EditorPage() {
           </div>
         </main>
 
-        {/* PROPERTIES PANEL */}
         <PropertiesPanel elements={elements} selectedId={selectedId} setElements={setElements} />
       </div>
 
@@ -924,3 +978,6 @@ function EditorPage() {
 }
 
 export default EditorPage;
+
+
+

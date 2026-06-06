@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const features = [
     { title: 'Modern Templates', desc: 'Choose from a variety of professionally designed certificates.' },
@@ -31,12 +33,21 @@ const LandingPage = () => {
           <a href="#features" className="text-sm font-bold text-[#1A1A2E]/60 hover:text-[#7C5CBF] transition-colors">Features</a>
           <a href="#about" className="text-sm font-bold text-[#1A1A2E]/60 hover:text-[#7C5CBF] transition-colors">About</a>
           <a href="#testimonials" className="text-sm font-bold text-[#1A1A2E]/60 hover:text-[#7C5CBF] transition-colors">Reviews</a>
-          <button 
-            onClick={() => navigate('/editor')}
-            className="bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-[#7C5CBF]/20"
-          >
-            Open Editor
-          </button>
+          {user ? (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-[#7C5CBF]/20"
+            >
+              My Projects
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/auth')}
+              className="bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-[#7C5CBF]/20"
+            >
+              Login
+            </button>
+          )}
         </div>
       </nav>
 
@@ -54,7 +65,7 @@ const LandingPage = () => {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button 
-              onClick={() => navigate('/editor')}
+              onClick={() => navigate(user ? '/editor' : '/auth')}
               className="w-full sm:w-auto bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-9 py-4 rounded-2xl font-black text-base transition-all shadow-xl shadow-[#7C5CBF]/25 hover:-translate-y-0.5"
             >
               Start Creating Free
@@ -73,9 +84,8 @@ const LandingPage = () => {
           {/* TOOL SELECTION CARDS */}
           <div className="mt-16 flex flex-col sm:flex-row items-stretch justify-center gap-6 max-w-2xl mx-auto">
             
-            {/* Certificate Card */}
             <button
-              onClick={() => navigate('/editor')}
+              onClick={() => navigate(user ? '/editor' : '/auth')}
               className="group flex-1 bg-white border border-[#E8E0F5] rounded-3xl p-8 shadow-sm hover:shadow-2xl hover:shadow-[#7C5CBF]/15 hover:-translate-y-2 transition-all duration-300 text-left active:scale-[0.98]"
             >
               <div className="w-14 h-14 bg-[#EDE7F6] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
@@ -98,9 +108,8 @@ const LandingPage = () => {
               </span>
             </button>
 
-            {/* Book Cover Card */}
             <button
-              onClick={() => navigate('/book')}
+              onClick={() => navigate(user ? '/book' : '/auth')}
               className="group flex-1 bg-white border border-[#E8E0F5] rounded-3xl p-8 shadow-sm hover:shadow-2xl hover:shadow-[#7C5CBF]/15 hover:-translate-y-2 transition-all duration-300 text-left active:scale-[0.98]"
             >
               <div className="w-14 h-14 bg-[#EDE7F6] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
@@ -145,7 +154,7 @@ const LandingPage = () => {
           <div>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight">Trusted by Educators and Professionals</h2>
             <p className="mt-6 text-lg text-[#1A1A2E]/65 font-medium leading-8">
-              CertGen is a simple certificate generation platform built for schools, colleges, conferences, companies, training institutes, and event organizers. It helps teams create certificates faster with professional templates and easy editing tools.
+              CertGen is a simple certificate generation platform built for schools, colleges, conferences, companies, training institutes, and event organizers.
             </p>
             <div className="mt-10 flex gap-4 flex-wrap">
               {['Fast Editing', 'PDF Export', 'Image Upload', 'Ready Templates'].map((item) => (
@@ -156,7 +165,6 @@ const LandingPage = () => {
               ))}
             </div>
           </div>
-
           <div className="relative">
             <div className="absolute inset-0 bg-[#7C5CBF] rounded-[3rem] rotate-3 opacity-10" />
             <div className="relative bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden">
@@ -172,7 +180,6 @@ const LandingPage = () => {
         <div className="text-center">
           <h2 className="text-4xl md:text-5xl font-black tracking-tight">What Users Say</h2>
         </div>
-
         <div className="mt-16 grid md:grid-cols-3 gap-8">
           {testimonials.map(([name, review]) => (
             <div key={name} className="rounded-3xl border border-[#E8E0F5] bg-white p-10 shadow-sm hover:border-[#7C5CBF]/30 hover:shadow-xl hover:shadow-[#7C5CBF]/10 transition-all">
@@ -181,7 +188,7 @@ const LandingPage = () => {
                   <svg key={i} viewBox="0 0 24 24" fill="#FFC107" className="w-5 h-5"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                 ))}
               </div>
-              <p className="text-gray-600 font-medium text-lg leading-relaxed italic">“{review}”</p>
+              <p className="text-gray-600 font-medium text-lg leading-relaxed italic">"{review}"</p>
               <div className="mt-8 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#F3EFF9] flex items-center justify-center text-[#7C5CBF] font-black text-xs">
                   {name.split(' ').map(n => n[0]).join('')}
@@ -200,7 +207,7 @@ const LandingPage = () => {
             <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">Ready to Start?</h2>
             <p className="text-white/60 font-medium mb-12 text-lg">Create your first certificate in less than a minute. No credit card required.</p>
             <button 
-              onClick={() => navigate('/editor')}
+              onClick={() => navigate(user ? '/editor' : '/auth')}
               className="bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-10 py-4 rounded-2xl font-black text-base transition-all shadow-2xl shadow-[#7C5CBF]/40"
             >
               Get Started Now — It's Free
@@ -217,15 +224,13 @@ const LandingPage = () => {
              </div>
              <span className="text-sm font-black tracking-tight">CertGen</span>
           </div>
-          <div className="text-sm text-gray-400 font-bold">
-            © 2026 CertGen. All rights reserved.
-          </div>
+          <div className="text-sm text-gray-400 font-bold">© 2026 CertGen. All rights reserved.</div>
           <div className="flex gap-6">
              {['Twitter', 'LinkedIn', 'Github'].map(s => (
                <a key={s} href="#" className="text-xs font-black uppercase tracking-widest text-gray-400 hover:text-[#7C5CBF] transition">{s}</a>
              ))}
           </div>
-        </div>
+        </div> 
       </footer>
     </div>
   );
