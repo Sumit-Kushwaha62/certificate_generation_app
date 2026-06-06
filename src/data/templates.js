@@ -10,7 +10,7 @@ const GREEN = '#1B4332';
 export const templates = [
   {
     id: 'blank',
-    name: 'Blank Page',
+    name: 'Template 1',
     category: 'corporate',
     background: null,
     backgroundColor: '#ffffff',
@@ -25,8 +25,34 @@ export const templates = [
     ],
   },
   {
+    id: 'ref_cert1',
+    name: 'Template 2',
+    category: 'education',
+    background: '/templates/ref_cert1.png',
+    textColor: DARK,
+    fields: [
+      { id: 'participantName', label: 'Participant Name', defaultValue: 'Participant Name', x: 400, y: 480, fontSize: 20, fontFamily: 'Playfair Display', color: '#8B0000', bold: true, italic: false, align: 'center', width: 500 },
+      { id: 'designation', label: 'Designation', defaultValue: 'Designation / Institution', x: 400, y: 510, fontSize: 15, fontFamily: 'DM Sans', color: '#000000', bold: false, italic: false, align: 'center', width: 500 },
+      { id: 'regNumber', label: 'Registration Number', defaultValue: 'Reg. No.', x: 720, y: 330, fontSize: 13, fontFamily: 'DM Sans', color: '#000000', bold: false, italic: false, align: 'left', width: 120 },
+      { id: 'techSession', label: 'Technical Session', defaultValue: 'Technical Session', x: 620, y: 528, fontSize: 13, fontFamily: 'DM Sans', color: '#000000', bold: false, italic: false, align: 'center', width: 200 },
+    ],
+  },
+  {
+    id: 'ref_cert2',
+    name: 'Template 3',
+    category: 'corporate',
+    background: '/templates/ref_cert2.png',
+    textColor: DARK,
+    fields: [
+      { id: 'participantName', label: 'Participant Name', defaultValue: 'Participant Name', x: 680, y: 428, fontSize: 20, fontFamily: 'Playfair Display', color: '#8B0000', bold: true, italic: false, align: 'left', width: 450 },
+      { id: 'designation', label: 'Designation', defaultValue: 'Designation / Institution', x: 400, y: 460, fontSize: 15, fontFamily: 'DM Sans', color: '#000000', bold: false, italic: false, align: 'center', width: 500 },
+      { id: 'regNumber', label: 'Registration Number', defaultValue: 'Reg. No.', x: 720, y: 290, fontSize: 13, fontFamily: 'DM Sans', color: '#000000', bold: false, italic: false, align: 'left', width: 120 },
+      { id: 'techSession', label: 'Technical Session', defaultValue: 'Technical Session', x: 400, y: 488, fontSize: 13, fontFamily: 'DM Sans', color: '#000000', bold: false, italic: false, align: 'center', width: 500 },
+    ],
+  },
+  {
     id: 'bg1',
-    name: 'Black Gold Geometric',
+    name: 'Template 4',
     category: 'corporate',
     background: '/templates/bg1.png',
     textColor: DARK,
@@ -47,7 +73,7 @@ export const templates = [
 
   {
     id: 'bg2',
-    name: 'Black Gold Curves',
+    name: 'Template 5',
     category: 'corporate',
     background: '/templates/bg2.png',
     textColor: WHITE,
@@ -67,7 +93,7 @@ export const templates = [
 
   {
     id: 'bg3',
-    name: 'Black Gold Floral',
+    name: 'Template 6',
     category: 'education',
     background: '/templates/bg3.png',
     textColor: WHITE,
@@ -86,7 +112,7 @@ export const templates = [
 
   {
     id: 'bg4',
-    name: 'Green Gold Laurel',
+    name: 'Template 7',
     category: 'education',
     background: '/templates/bg4.png',
     textColor: WHITE,
@@ -106,7 +132,7 @@ export const templates = [
 
   {
     id: 'bg5',
-    name: 'Green Lotus',
+    name: 'Template 8',
     category: 'education',
     background: '/templates/bg5.png',
     textColor: GREEN,
@@ -126,7 +152,7 @@ export const templates = [
 
   {
     id: 'bg6',
-    name: 'White Gold Lace',
+    name: 'Template 9',
     category: 'corporate',
     background: '/templates/bg6.png',
     textColor: DARK,
@@ -145,7 +171,7 @@ export const templates = [
 
   {
     id: 'bg7',
-    name: 'Classic Cream',
+    name: 'Template 10',
     category: 'education',
     background: '/templates/bg7.png',
     textColor: DARK,
@@ -165,7 +191,7 @@ export const templates = [
 
   {
     id: 'bg8',
-    name: 'Red Gold Wave',
+    name: 'Template 11',
     category: 'corporate',
     background: '/templates/bg8.png',
     textColor: DARK,

@@ -1,38 +1,52 @@
 import { useEffect, useRef, useState } from 'react';
-import { Stage, Layer, Image as KonvaImage, Text, Transformer } from 'react-konva';
+import { Stage, Layer, Image as KonvaImage, Rect, Text, Transformer } from 'react-konva';
 
 const CANVAS_W = 800;
 const CANVAS_H = 566;
 
-const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSelectedId }) => {
+const CanvasEditor = ({ stageRef, activeTemplate, elements, setElements, selectedId, setSelectedId }) => {
   const [bgImage, setBgImage] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editPos, setEditPos] = useState({ x: 0, y: 0, width: 0, fontSize: 16 });
   const [editValue, setEditValue] = useState('');
-  const stageRef = useRef(null);
+  const fallbackStageRef = useRef(null);
+  const resolvedStageRef = stageRef || fallbackStageRef;
   const trRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Load PNG background
+  // Load background image, including uploaded data URLs.
   useEffect(() => {
-    if (!activeTemplate?.background) return;
+    if (!activeTemplate?.background) {
+      setBgImage(null);
+      return;
+    }
+
+    let cancelled = false;
     const img = new window.Image();
+    img.onload = () => {
+      if (!cancelled) setBgImage(img);
+    };
+    img.onerror = () => {
+      if (!cancelled) setBgImage(null);
+    };
     img.src = activeTemplate.background;
-    img.onload = () => setBgImage(img);
-    img.onerror = () => setBgImage(null);
-  }, [activeTemplate]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTemplate?.background]);
 
   // Transformer attach
   useEffect(() => {
-    if (!trRef.current || !stageRef.current) return;
+    if (!trRef.current || !resolvedStageRef.current) return;
     if (selectedId) {
-      const node = stageRef.current.findOne(`#${selectedId}`);
+      const node = resolvedStageRef.current.findOne(`#${selectedId}`);
       if (node) { trRef.current.nodes([node]); trRef.current.getLayer()?.batchDraw(); }
     } else {
       trRef.current.nodes([]);
       trRef.current.getLayer()?.batchDraw();
     }
-  }, [selectedId, elements]);
+  }, [resolvedStageRef, selectedId, elements]);
 
   useEffect(() => {
     if (editingId && inputRef.current) { inputRef.current.focus(); inputRef.current.select(); }
@@ -43,7 +57,7 @@ const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSe
   };
 
   const handleDblClick = (el) => {
-    const stageBox = stageRef.current?.container().getBoundingClientRect();
+    const stageBox = resolvedStageRef.current?.container().getBoundingClientRect();
     if (!stageBox) return;
     const scale = stageBox.width / CANVAS_W;
     setEditPos({
@@ -74,9 +88,18 @@ const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSe
 
   return (
     <div className="relative" style={{ width: CANVAS_W, height: CANVAS_H }}>
-      <Stage ref={stageRef} width={CANVAS_W} height={CANVAS_H} onClick={handleStageClick}
+      <Stage ref={resolvedStageRef} width={CANVAS_W} height={CANVAS_H} onClick={handleStageClick}
         style={{ background: activeTemplate?.backgroundColor || '#ffffff' }}>
         <Layer>
+          <Rect
+            x={0}
+            y={0}
+            width={CANVAS_W}
+            height={CANVAS_H}
+            fill={activeTemplate?.backgroundColor || '#ffffff'}
+            listening={false}
+          />
+
           {/* PNG Background */}
           {bgImage && (
             <KonvaImage image={bgImage} x={0} y={0} width={CANVAS_W} height={CANVAS_H} listening={false} />
@@ -96,6 +119,11 @@ const CanvasEditor = ({ activeTemplate, elements, setElements, selectedId, setSe
                   fontStyle={[el.bold ? 'bold' : '', el.italic ? 'italic' : ''].filter(Boolean).join(' ') || 'normal'}
                   align={el.align || 'center'}
                   width={el.width || 400}
+                  shadowEnabled={!!el.shadowEnabled}
+                  shadowColor={el.shadowEnabled ? (el.shadowColor || 'rgba(0,0,0,0.35)') : undefined}
+                  shadowBlur={el.shadowEnabled ? (el.shadowBlur ?? 4) : 0}
+                  shadowOffsetX={el.shadowEnabled ? (el.shadowOffsetX ?? 2) : 0}
+                  shadowOffsetY={el.shadowEnabled ? (el.shadowOffsetY ?? 2) : 0}
                   draggable
                   opacity={editingId === el.id ? 0 : 1}
                   onClick={() => setSelectedId(el.id)}

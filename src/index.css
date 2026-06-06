@@ -9,6 +9,9 @@
   --font-cert: 'Playfair Display', Georgia, serif;
   --color-brand: #7C5CBF;
   --color-brand-light: #EDE7F6;
+  --color-surface: #FFFFFF;
+  --color-border: #E8E0F5;
+  --color-text: #1A1A2E;
 }
 
 * {
@@ -23,7 +26,8 @@ html, body, #root {
 
 body {
   font-family: var(--font-ui);
-  background: #EBEBEB;
+  background: #F7F4FB;
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -37,9 +41,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D0D0D0;
+  background: #D8CFEA;
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #BBBBBB;
+  background: #C4B0E8;
 }

@@ -19,21 +19,21 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white text-[#1A1A2E] font-sans selection:bg-[#7C5CBF]/10">
       
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 px-6 md:px-12 flex items-center justify-between">
+      <nav className="fixed top-0 left-0 right-0 h-20 bg-white/85 backdrop-blur-xl z-50 border-b border-[#E8E0F5] px-6 md:px-12 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#7C5CBF] rounded-2xl flex items-center justify-center shadow-lg shadow-[#7C5CBF]/20">
             <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           </div>
-          <span className="text-xl font-black tracking-tight">CertGen</span>
+          <span className="text-xl font-black tracking-tight text-[#1A1A2E]">CertGen</span>
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          <a href="#features" className="text-sm font-bold text-gray-500 hover:text-[#7C5CBF] transition">Features</a>
-          <a href="#about" className="text-sm font-bold text-gray-500 hover:text-[#7C5CBF] transition">About</a>
-          <a href="#testimonials" className="text-sm font-bold text-gray-500 hover:text-[#7C5CBF] transition">Reviews</a>
+          <a href="#features" className="text-sm font-bold text-[#1A1A2E]/60 hover:text-[#7C5CBF] transition-colors">Features</a>
+          <a href="#about" className="text-sm font-bold text-[#1A1A2E]/60 hover:text-[#7C5CBF] transition-colors">About</a>
+          <a href="#testimonials" className="text-sm font-bold text-[#1A1A2E]/60 hover:text-[#7C5CBF] transition-colors">Reviews</a>
           <button 
             onClick={() => navigate('/editor')}
-            className="bg-[#7C5CBF] hover:bg-[#6A4DAD] text-white px-6 py-2.5 rounded-2xl font-bold transition shadow-lg shadow-[#7C5CBF]/20"
+            className="bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-[#7C5CBF]/20"
           >
             Open Editor
           </button>
@@ -41,21 +41,21 @@ const LandingPage = () => {
       </nav>
 
       {/* HERO SECTION */}
-      <header className="pt-40 pb-20 px-6 text-center">
-        <div className="max-w-4xl mx-auto">
-          <span className="inline-block bg-[#F3EFF9] text-[#7C5CBF] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-6">
+      <header className="pt-40 pb-24 px-6 text-center bg-[radial-gradient(circle_at_top,#F2ECFF_0%,#FFFFFF_48%,#FAF8FE_100%)]">
+        <div className="max-w-5xl mx-auto">
+          <span className="inline-flex items-center bg-white text-[#7C5CBF] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-6 border border-[#E8E0F5] shadow-sm">
             ✨ Free Online Certificate Maker
           </span>
-          <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-black leading-[1.04] tracking-tight text-[#1A1A2E]">
             Create Professional <span className="text-[#7C5CBF]">Certificates</span> in Seconds
           </h1>
-          <p className="mt-8 text-lg md:text-xl text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-7 text-lg md:text-xl text-[#1A1A2E]/65 font-medium max-w-2xl mx-auto leading-relaxed">
             Designing and issuing certificates has never been easier. Use our drag-and-drop editor to create beautiful awards for your team or students.
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button 
               onClick={() => navigate('/editor')}
-              className="w-full sm:w-auto bg-[#7C5CBF] hover:bg-[#6A4DAD] text-white px-10 py-5 rounded-[2rem] font-black text-lg transition-all shadow-2xl shadow-[#7C5CBF]/30 hover:scale-105"
+              className="w-full sm:w-auto bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-9 py-4 rounded-2xl font-black text-base transition-all shadow-xl shadow-[#7C5CBF]/25 hover:-translate-y-0.5"
             >
               Start Creating Free
             </button>
@@ -64,7 +64,7 @@ const LandingPage = () => {
                 const el = document.getElementById('features');
                 el?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="w-full sm:w-auto bg-[#F8F6FC] hover:bg-[#EFECF7] text-[#7C5CBF] px-10 py-5 rounded-[2rem] font-black text-lg transition border border-[#7C5CBF]/10"
+              className="w-full sm:w-auto bg-white hover:bg-[#FAF8FE] text-[#7C5CBF] px-9 py-4 rounded-2xl font-black text-base transition-all border border-[#E8E0F5] shadow-sm active:scale-[0.98]"
             >
               Learn More
             </button>
@@ -75,7 +75,7 @@ const LandingPage = () => {
       <section id="features" className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid md:grid-cols-3 gap-8">
           {features.map(({ title, desc }) => (
-            <div key={title} className="group p-8 rounded-[2.5rem] bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-purple-500/5 transition duration-500">
+            <div key={title} className="group p-8 rounded-3xl bg-white border border-[#E8E0F5] shadow-sm hover:shadow-xl hover:shadow-[#7C5CBF]/10 hover:-translate-y-1 transition-all duration-300">
               <div className="w-14 h-14 rounded-2xl bg-[#F3EFF9] text-[#7C5CBF] flex items-center justify-center font-bold text-xl group-hover:scale-110 transition">
                 {title.charAt(0)}
               </div>
@@ -90,12 +90,12 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight">Trusted by Educators and Professionals</h2>
-            <p className="mt-6 text-lg text-gray-600 font-medium leading-8">
+            <p className="mt-6 text-lg text-[#1A1A2E]/65 font-medium leading-8">
               CertGen is a simple certificate generation platform built for schools, colleges, conferences, companies, training institutes, and event organizers. It helps teams create certificates faster with professional templates and easy editing tools.
             </p>
             <div className="mt-10 flex gap-4 flex-wrap">
               {['Fast Editing', 'PDF Export', 'Image Upload', 'Ready Templates'].map((item) => (
-                <div key={item} className="bg-white rounded-full px-6 py-3 shadow-sm border border-purple-100 flex items-center gap-2">
+                <div key={item} className="bg-white rounded-full px-6 py-3 shadow-sm border border-[#E8E0F5] flex items-center gap-2 transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="w-2 h-2 rounded-full bg-[#7C5CBF]" />
                   <span className="font-bold text-sm text-[#7C5CBF]">{item}</span>
                 </div>
@@ -121,7 +121,7 @@ const LandingPage = () => {
 
         <div className="mt-16 grid md:grid-cols-3 gap-8">
           {testimonials.map(([name, review]) => (
-            <div key={name} className="rounded-[2.5rem] border border-gray-100 bg-white p-10 shadow-sm hover:border-[#7C5CBF]/20 transition">
+            <div key={name} className="rounded-3xl border border-[#E8E0F5] bg-white p-10 shadow-sm hover:border-[#7C5CBF]/30 hover:shadow-xl hover:shadow-[#7C5CBF]/10 transition-all">
               <div className="flex gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} viewBox="0 0 24 24" fill="#FFC107" className="w-5 h-5"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
@@ -147,7 +147,7 @@ const LandingPage = () => {
             <p className="text-white/60 font-medium mb-12 text-lg">Create your first certificate in less than a minute. No credit card required.</p>
             <button 
               onClick={() => navigate('/editor')}
-              className="bg-[#7C5CBF] hover:bg-[#6A4DAD] text-white px-12 py-5 rounded-[2rem] font-black text-lg transition shadow-2xl shadow-[#7C5CBF]/40"
+              className="bg-[#7C5CBF] hover:bg-[#6A4DAD] active:scale-[0.98] text-white px-10 py-4 rounded-2xl font-black text-base transition-all shadow-2xl shadow-[#7C5CBF]/40"
             >
               Get Started Now — It's Free
             </button>
