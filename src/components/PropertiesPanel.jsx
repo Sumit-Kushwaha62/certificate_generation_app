@@ -96,7 +96,7 @@ const PropertiesPanel = ({ elements, selectedId, setElements }) => {
           </label>
           <input
             type="range"
-            min={8} max={80} step={1}
+            min={8} max={120} step={1}
             value={selected.fontSize || 24}
             onChange={(e) => update('fontSize', Number(e.target.value))}
             className="w-full accent-[#7C5CBF]"

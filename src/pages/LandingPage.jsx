@@ -69,6 +69,60 @@ const LandingPage = () => {
               Learn More
             </button>
           </div>
+
+          {/* TOOL SELECTION CARDS */}
+          <div className="mt-16 flex flex-col sm:flex-row items-stretch justify-center gap-6 max-w-2xl mx-auto">
+            
+            {/* Certificate Card */}
+            <button
+              onClick={() => navigate('/editor')}
+              className="group flex-1 bg-white border border-[#E8E0F5] rounded-3xl p-8 shadow-sm hover:shadow-2xl hover:shadow-[#7C5CBF]/15 hover:-translate-y-2 transition-all duration-300 text-left active:scale-[0.98]"
+            >
+              <div className="w-14 h-14 bg-[#EDE7F6] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" strokeWidth="1.8" className="w-7 h-7">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="M8 10h8M8 14h5"/>
+                  <circle cx="17" cy="14" r="2.5"/>
+                  <path d="M15.5 16l-1.5 2"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-black text-[#1A1A2E] mb-2">Certificate Maker</h3>
+              <p className="text-sm text-[#1A1A2E]/55 font-medium leading-relaxed mb-5">
+                Create professional certificates for courses, events, achievements and conferences.
+              </p>
+              <span className="inline-flex items-center gap-1.5 text-[#7C5CBF] text-sm font-black group-hover:gap-2.5 transition-all">
+                Open Editor
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </button>
+
+            {/* Book Cover Card */}
+            <button
+              onClick={() => navigate('/book')}
+              className="group flex-1 bg-white border border-[#E8E0F5] rounded-3xl p-8 shadow-sm hover:shadow-2xl hover:shadow-[#7C5CBF]/15 hover:-translate-y-2 transition-all duration-300 text-left active:scale-[0.98]"
+            >
+              <div className="w-14 h-14 bg-[#EDE7F6] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" strokeWidth="1.8" className="w-7 h-7">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  <path d="M8 7h8M8 11h6"/>
+                </svg>
+              </div>
+              <h3 className="text-xl font-black text-[#1A1A2E] mb-2">Book Cover Maker</h3>
+              <p className="text-sm text-[#1A1A2E]/55 font-medium leading-relaxed mb-5">
+                Design stunning book covers for novels, textbooks, reports and self-published works.
+              </p>
+              <span className="inline-flex items-center gap-1.5 text-[#7C5CBF] text-sm font-black group-hover:gap-2.5 transition-all">
+                Open Editor
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </button>
+
+          </div>
         </div>
       </header>
 

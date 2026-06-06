@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import TemplateGrid from '../components/TemplateGrid';
 import CanvasEditor from '../components/CanvasEditor';
 import PropertiesPanel from '../components/PropertiesPanel';
-import { templates } from '../data/templates';
+import { bookTemplates, BOOK_CANVAS_W, BOOK_CANVAS_H } from '../data/bookTemplates';
 import useExport from '../hooks/useExport';
 import JSZip from 'jszip';
 import QRCode from 'qrcode';
@@ -113,11 +113,11 @@ const createQRImage = async (value) => {
   return loadImage(dataURL);
 };
 
-function EditorPage() {
-  const [activeTemplate, setActiveTemplate] = useState(templates[0]);
-  const [elements, setElements] = useState(() => buildElements(templates[0]));
+function BookEditorPage() {
+  const [activeTemplate, setActiveTemplate] = useState(bookTemplates[0]);
+  const [elements, setElements] = useState(() => buildElements(bookTemplates[0]));
   const [historyStack, setHistoryStack] = useState(() => [
-    cloneElementsSnapshot(buildElements(templates[0])),
+    cloneElementsSnapshot(buildElements(bookTemplates[0])),
   ]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
@@ -476,6 +476,7 @@ function EditorPage() {
             <svg viewBox="0 0 24 24" fill="white" className="w-[18px] h-[18px]"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
           </div>
           <span className="text-[15px] font-bold text-[#1A1A2E]">CertGen</span>
+          <span className="text-[10px] bg-[#EDE7F6] text-[#7C5CBF] px-2 py-0.5 rounded-full font-semibold">BOOK</span>
           <span className="text-[10px] bg-[#EDE7F6] text-[#7C5CBF] px-2 py-0.5 rounded-full font-semibold">PRO</span>
         </div>
 
@@ -688,7 +689,7 @@ function EditorPage() {
 
             {/* TEMPLATES */}
             {activePanel === 'templates' && (
-              <TemplateGrid query={query} activeTemplate={activeTemplate} setActiveTemplate={handleTemplateSelect} />
+              <TemplateGrid query={query} activeTemplate={activeTemplate} setActiveTemplate={handleTemplateSelect} templates={bookTemplates} />
             )}
 
             {/* FORM FILL — dynamic, auto-detects fields from active template */}
@@ -832,7 +833,7 @@ function EditorPage() {
             <div>
               <div
                 className="rounded-2xl overflow-hidden shadow-[0_18px_50px_rgba(26,26,46,0.14)] border border-[#E8E0F5] bg-white"
-                style={{ width: 800, height: 560 }}>
+                style={{ width: BOOK_CANVAS_W, height: BOOK_CANVAS_H }}>
                 <CanvasEditor
                   stageRef={stageRef}
                   activeTemplate={activeTemplate}
@@ -840,9 +841,11 @@ function EditorPage() {
                   setElements={setElements}
                   selectedId={selectedId}
                   setSelectedId={(id) => { setSelectedId(id); if (id) setActivePanel('layers'); }}
+                  canvasW={BOOK_CANVAS_W}
+                  canvasH={BOOK_CANVAS_H}
                 />
               </div>
-              <p className="text-center text-[10px] text-[#AAA] mt-3">Certificate (Landscape) · 800 × 566</p>
+              <p className="text-center text-[10px] text-[#AAA] mt-3">Book Cover (Portrait) · {BOOK_CANVAS_W} × {BOOK_CANVAS_H}</p>
             </div>
           </div>
         </main>
@@ -923,4 +926,4 @@ function EditorPage() {
   );
 }
 
-export default EditorPage;
+export default BookEditorPage;

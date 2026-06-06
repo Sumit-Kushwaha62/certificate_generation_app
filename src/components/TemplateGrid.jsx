@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
-import { templates } from '../data/templates';
+import { templates as defaultTemplates } from '../data/templates';
 
-const TemplateGrid = ({ query, activeTemplate, setActiveTemplate }) => {
+const TemplateGrid = ({ query, activeTemplate, setActiveTemplate, templates = defaultTemplates }) => {
   const [hoveredId, setHoveredId] = useState(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return templates;
-
     return templates.filter((template) =>
       template.name.toLowerCase().includes(q)
     );

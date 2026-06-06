@@ -14,10 +14,10 @@ const useExport = (stageRef, closeShare = () => {}) => {
     return stage;
   };
 
-  const getPNGDataURL = () =>
+  const getPNGDataURL = (pixelRatio = EXPORT_PIXEL_RATIO) =>
     getStage().toDataURL({
       mimeType: 'image/png',
-      pixelRatio: EXPORT_PIXEL_RATIO,
+      pixelRatio,
     });
 
   const dataURLToBlob = async (dataURL) => {

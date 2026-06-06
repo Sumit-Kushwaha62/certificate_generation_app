@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Stage, Layer, Image as KonvaImage, Rect, Text, Transformer } from 'react-konva';
 
-const CANVAS_W = 800;
-const CANVAS_H = 566;
+const DEFAULT_W = 800;
+const DEFAULT_H = 566;
 
-const CanvasEditor = ({ stageRef, activeTemplate, elements, setElements, selectedId, setSelectedId }) => {
+const CanvasEditor = ({ stageRef, activeTemplate, elements, setElements, selectedId, setSelectedId, canvasW = DEFAULT_W, canvasH = DEFAULT_H }) => {
+  const CANVAS_W = canvasW;
+  const CANVAS_H = canvasH;
   const [bgImage, setBgImage] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editPos, setEditPos] = useState({ x: 0, y: 0, width: 0, fontSize: 16 });
