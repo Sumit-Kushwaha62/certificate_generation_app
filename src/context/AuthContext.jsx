@@ -8,21 +8,35 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    if (!supabase) {
       setLoading(false);
-    });
+      return;
+    }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      })
+      .catch((err) => {
+        console.error('Supabase auth error:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
 
-    return () => subscription.unsubscribe();
+    if (supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null);
+      });
+      return () => {
+        if (subscription) subscription.unsubscribe();
+      };
+    }
   }, []);
 
-  const signUp = (email, password) => supabase.auth.signUp({ email, password });
-  const signIn = (email, password) => supabase.auth.signInWithPassword({ email, password });
-  const signOut = () => supabase.auth.signOut();
+  const signUp = (email, password) => supabase?.auth.signUp({ email, password });
+  const signIn = (email, password) => supabase?.auth.signInWithPassword({ email, password });
+  const signOut = () => supabase?.auth.signOut();
 
   return (
     <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut }}>

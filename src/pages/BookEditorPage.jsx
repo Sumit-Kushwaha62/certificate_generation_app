@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import TemplateGrid from '../components/TemplateGrid';
 import CanvasEditor from '../components/CanvasEditor';
 import PropertiesPanel from '../components/PropertiesPanel';
@@ -6,6 +7,8 @@ import { bookTemplates, BOOK_CANVAS_W, BOOK_CANVAS_H } from '../data/bookTemplat
 import useExport from '../hooks/useExport';
 import JSZip from 'jszip';
 import QRCode from 'qrcode';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 let elCounter = 100;
 const newId = () => `el_${++elCounter}`;
@@ -114,6 +117,10 @@ const createQRImage = async (value) => {
 };
 
 function BookEditorPage() {
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const [activeTemplate, setActiveTemplate] = useState(bookTemplates[0]);
   const [elements, setElements] = useState(() => buildElements(bookTemplates[0]));
   const [historyStack, setHistoryStack] = useState(() => [
@@ -129,6 +136,12 @@ function BookEditorPage() {
   const [bulkFileName, setBulkFileName] = useState('');
   const [bulkProgress, setBulkProgress] = useState('');
   const [bulkGenerating, setBulkGenerating] = useState(false);
+
+  // Save state
+  const [designId, setDesignId] = useState(null);
+  const [designName, setDesignName] = useState('Untitled Book Cover');
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
 
   // Form state — dynamic, keyed by field id
   const [formData, setFormData] = useState({});
@@ -151,6 +164,18 @@ function BookEditorPage() {
   const hasQRCode = elements.some((el) => el.qrCode);
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < historyStack.length - 1;
+
+  // Load existing design if ?id= present
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (!id) return;
+    supabase.from('designs').select('*').eq('id', id).single().then(({ data }) => {
+      if (!data) return;
+      setDesignId(data.id);
+      setDesignName(data.name);
+      if (data.elements) setElements(data.elements);
+    });
+  }, []);
 
   useEffect(() => {
     if (isRestoringHistoryRef.current) {
@@ -268,6 +293,33 @@ function BookEditorPage() {
       cancelled = true;
     };
   }, [hasQRCode, regNumberValue]);
+
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    setSaveMsg('');
+
+    const serializableElements = elements.map(({ imageObj, ...rest }) => rest);
+
+    const payload = {
+      user_id: user.id,
+      name: designName,
+      type: 'book',
+      elements: serializableElements,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (designId) {
+      await supabase.from('designs').update(payload).eq('id', designId);
+    } else {
+      const { data } = await supabase.from('designs').insert(payload).select().single();
+      if (data) setDesignId(data.id);
+    }
+
+    setSaving(false);
+    setSaveMsg('Saved!');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
 
   // Switch template → rebuild elements
   const handleTemplateSelect = (template) => {
@@ -480,7 +532,12 @@ function BookEditorPage() {
           <span className="text-[10px] bg-[#EDE7F6] text-[#7C5CBF] px-2 py-0.5 rounded-full font-semibold">PRO</span>
         </div>
 
-        <span className="text-[12px] font-bold text-[#7C5CBF] bg-[#FAF8FE] border border-[#E8E0F5] px-3 py-1.5 rounded-full">{activeTemplate?.name}</span>
+        <input
+          type="text"
+          value={designName}
+          onChange={e => setDesignName(e.target.value)}
+          className="text-[12px] font-bold text-[#7C5CBF] bg-[#FAF8FE] border border-[#E8E0F5] px-3 py-1.5 rounded-full text-center focus:outline-none focus:border-[#7C5CBF] w-48"
+        />
 
         <div className="flex items-center gap-2.5 relative">
 
@@ -643,6 +700,21 @@ function BookEditorPage() {
             </svg>
             Bulk Generate
           </button>
+
+          {/* SAVE BUTTON */}
+          {user && (
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            title="Save design"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[12px] font-bold transition-all bg-green-500 hover:bg-green-600 active:scale-[0.98] text-white shadow-md disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : saveMsg ? '✓ Saved!' : <>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save
+            </>}
+          </button>
+          )}
 
           {/* DOWNLOAD PDF */}
           <button onClick={exportPDF} disabled={exporting}
@@ -927,3 +999,11 @@ function BookEditorPage() {
 }
 
 export default BookEditorPage;
+
+
+
+
+
+
+
+
